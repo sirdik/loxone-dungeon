@@ -6,7 +6,7 @@ export const ENTITY_META = {
     color:           '#ff4444',
     label:           'Motion Sensor',
     hp:              8,
-    attack:          3,
+    attack:          2,        // 3 → 2
     activationRange: Infinity, // always chases
     range:           0,
     projectileDamage: 0,
@@ -15,9 +15,9 @@ export const ENTITY_META = {
     glyph:           'B',
     color:           '#bb44ff',
     label:           'Haunted Blind',
-    hp:              14,
+    hp:              10,       // 14 → 10 (2 hits to kill)
     attack:          2,
-    activationRange: 5,        // lurks until player is close
+    activationRange: 4,        // 5 → 4 (shorter lurk range)
     range:           0,
     projectileDamage: 0,
   },
@@ -28,8 +28,8 @@ export const ENTITY_META = {
     hp:              6,
     attack:          0,
     activationRange: Infinity,
-    range:           7,        // max fireball range (Manhattan)
-    projectileDamage: 4,
+    range:           5,        // 7 → 5 (shorter firing range)
+    projectileDamage: 3,       // 4 → 3
   },
 };
 

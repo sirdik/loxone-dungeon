@@ -13,7 +13,7 @@ export function createInitialState() {
   const generated = generateFloor(floor);
   return {
     map:         generated.map,
-    player:      { x: generated.playerStart.x, y: generated.playerStart.y, hp: 20, maxHp: 20, attack: 5, inventory: { touchPure: 0 } },
+    player:      { x: generated.playerStart.x, y: generated.playerStart.y, hp: 25, maxHp: 25, attack: 5, inventory: { touchPure: 0 } },
     entities:    generated.entities,
     items:       generated.items,
     projectiles: [],
@@ -46,7 +46,7 @@ function replaceTile(map, x, y, tile) {
 function descend(state) {
   const nextFloor = state.floor + 1;
   const generated = generateFloor(nextFloor);
-  const healAmt   = Math.min(3, state.player.maxHp - state.player.hp);
+  const healAmt   = Math.min(5, state.player.maxHp - state.player.hp);
   return {
     map:         generated.map,
     player: {

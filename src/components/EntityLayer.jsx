@@ -1,110 +1,89 @@
-import { TILE_SIZE } from '../constants';
-import { ENTITY_META } from '../entities';
-import { ITEM_META } from '../items';
+import { TILE_SIZE, ITEM_TYPE } from '../constants';
+import {
+  ENTITY_SPRITES,
+  ENTITY_CLASSES,
+  ITEM_SPRITES,
+  PlayerSprite,
+  FireballSprite,
+} from './Sprites';
 
 function HpBar({ hp, maxHp }) {
   const pct   = Math.max(0, hp / maxHp);
   const color = pct > 0.5 ? 'var(--loxone-green)' : pct > 0.25 ? '#ff8800' : '#ff3333';
   return (
-    <div style={{ position: 'absolute', bottom: 3, left: 4, right: 4, height: 3, background: '#333', borderRadius: 2 }}>
+    <div style={{
+      position: 'absolute', bottom: 2, left: 2, right: 2,
+      height: 3, background: '#1a1a1a', borderRadius: 2,
+    }}>
       <div style={{ width: `${pct * 100}%`, height: '100%', background: color, borderRadius: 2 }} />
     </div>
   );
 }
 
-function Sprite({ left, top, color, glow, fontSize, children, style = {} }) {
+// Absolute tile-aligned wrapper
+function Tile({ x, y, zIndex = 5, children }) {
   return (
-    <div
-      style={{
-        position:       'absolute',
-        left:           left * TILE_SIZE,
-        top:            top  * TILE_SIZE,
-        width:          TILE_SIZE,
-        height:         TILE_SIZE,
-        display:        'flex',
-        alignItems:     'center',
-        justifyContent: 'center',
-        fontSize,
-        color,
-        textShadow:     glow ? `0 0 8px ${glow}` : undefined,
-        pointerEvents:  'none',
-        ...style,
-      }}
-    >
+    <div style={{
+      position:      'absolute',
+      left:          x * TILE_SIZE,
+      top:           y * TILE_SIZE,
+      width:         TILE_SIZE,
+      height:        TILE_SIZE,
+      pointerEvents: 'none',
+      zIndex,
+    }}>
       {children}
     </div>
   );
 }
 
 /**
- * Renders (bottom to top): floor items → enemies → projectiles → player.
- * All children are absolute-positioned inside DungeonGrid's relative container.
+ * Renders (bottom → top): floor items → enemies → projectiles → player.
+ * All sprites sit inside DungeonGrid's relative container as absolute children.
  */
 export default function EntityLayer({ player, entities, projectiles, items }) {
   return (
     <>
-      {/* Floor items — rendered first so entities appear on top */}
+      {/* ── Floor items ────────────────────────────────────────────────── */}
       {items.map(item => {
-        const meta = ITEM_META[item.type];
+        const SpriteComp = ITEM_SPRITES[item.type];
+        const className  = item.type === ITEM_TYPE.MINISERVER ? 'sprite-miniserver' : '';
         return (
-          <Sprite
-            key={item.id}
-            left={item.x}
-            top={item.y}
-            color={meta.color}
-            glow={meta.glow}
-            fontSize={20}
-            style={{ zIndex: 1 }}
-          >
-            {meta.glyph}
-          </Sprite>
+          <Tile key={item.id} x={item.x} y={item.y} zIndex={1}>
+            <div className={className}>
+              <SpriteComp />
+            </div>
+          </Tile>
         );
       })}
 
-      {/* Enemies */}
+      {/* ── Enemies ────────────────────────────────────────────────────── */}
       {entities.map(entity => {
-        const meta = ENTITY_META[entity.type];
+        const SpriteComp = ENTITY_SPRITES[entity.type];
+        const className  = ENTITY_CLASSES[entity.type] ?? '';
         return (
-          <Sprite
-            key={entity.id}
-            left={entity.x}
-            top={entity.y}
-            color={meta.color}
-            fontSize={20}
-            style={{ zIndex: 5 }}
-          >
-            {meta.glyph}
+          <Tile key={entity.id} x={entity.x} y={entity.y} zIndex={5}>
+            <div className={className}>
+              <SpriteComp />
+            </div>
             <HpBar hp={entity.hp} maxHp={entity.maxHp} />
-          </Sprite>
+          </Tile>
         );
       })}
 
-      {/* Projectiles */}
+      {/* ── Projectiles ────────────────────────────────────────────────── */}
       {projectiles.map(proj => (
-        <Sprite
-          key={proj.id}
-          left={proj.x}
-          top={proj.y}
-          color="#ff6600"
-          glow="rgba(255,102,0,0.9)"
-          fontSize={18}
-          style={{ zIndex: 6 }}
-        >
-          *
-        </Sprite>
+        <Tile key={proj.id} x={proj.x} y={proj.y} zIndex={6}>
+          <div className="sprite-fireball">
+            <FireballSprite />
+          </div>
+        </Tile>
       ))}
 
-      {/* Player — always on top */}
-      <Sprite
-        left={player.x}
-        top={player.y}
-        color="var(--loxone-green)"
-        glow="rgba(105,190,40,0.8)"
-        fontSize={22}
-        style={{ zIndex: 10 }}
-      >
-        @
-      </Sprite>
+      {/* ── Player ─────────────────────────────────────────────────────── */}
+      <Tile x={player.x} y={player.y} zIndex={10}>
+        <PlayerSprite />
+      </Tile>
     </>
   );
 }
