@@ -1,0 +1,32 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --loxone-green: #69BE28;
+  --loxone-green-dim: #4a8a1c;
+  --bg-dark: #0d0d0d;
+  --bg-panel: #1a1a1a;
+  --wall-color: #2a2a2a;
+  --floor-color: #1e1e1e;
+  --text-primary: #e8e8e8;
+  --text-muted: #666666;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: 'Courier New', Courier, monospace;
+  overflow: hidden;
+  user-select: none;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
